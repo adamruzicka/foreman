@@ -274,6 +274,10 @@ module Foreman
       routes_reloader.execute_if_updated
     end
 
+    initializer :deface_ordering_fix, :before => :set_autoload_paths, :after => 'deface.tweak_eager_loading' do
+      # Intentionally left balnk
+    end
+
     config.after_initialize do
       dynflow = Rails.application.dynflow
       dynflow.eager_load_actions!
