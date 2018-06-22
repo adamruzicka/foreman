@@ -7,6 +7,12 @@ module Foreman
                                  .fetch(:pool_size, pool_size)
       end
 
+      def world_config
+        super.tap do |config|
+          config.telemetry_adapter = Foreman::Telemetry::DynflowTelemetryWrapper.new
+        end
+      end
+
       # Action related info such as exceptions raised inside the actions' methods
       def action_logger
         Foreman::Logging.logger('background')

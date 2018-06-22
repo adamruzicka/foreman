@@ -1,5 +1,6 @@
 require 'singleton'
 require 'forwardable'
+require 'dynflow'
 
 module Foreman
   class Telemetry
@@ -118,6 +119,12 @@ module Foreman
 
     def observe_histogram(name, value, tags = {})
       @sinks.each { |x| x.observe_histogram("#{prefix}_#{name}", value, tags) }
+    end
+
+    class DynflowTelemetryWrapper < ::Dynflow::TelemetryAdapters::Abstract
+      def with_instance
+        yield ::Foreman::Telemetry.instance
+      end
     end
   end
 end
