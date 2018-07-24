@@ -46,10 +46,10 @@ const mapping = {
   'XenServer': XenServer,
 };
 
-const findOsIcon = (name, family) => {
+const findOsIcon = (name, family, size) => {
   for (var re in mapping) {
     if (name.match(new RegExp(re, 'i'))) {
-      return <img src={mapping[re]} alt={family} />
+      return <img src={mapping[re]} alt={family} size={size} />
     }
   }
   return emptyIcon(family);
@@ -59,17 +59,18 @@ const emptyIcon = (family) => {
   return family == null ? <div/> : <div>{ family }</div>;
 }
 
-const OsIcon = ({ name, family }) => {
+const OsIcon = ({ name, family, size }) => {
   if (name == null) {
     return emptyIcon(family);
   } else {
-    return findOsIcon(name, family);
+    return findOsIcon(name, family, size);
   }
 };
 
 OsIcon.propTypes = {
   name: PropTypes.string,
-  family: PropTypes.string
+  family: PropTypes.string,
+  size: PropTypes.string,
 }
 
 export default OsIcon;
