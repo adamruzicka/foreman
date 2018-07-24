@@ -10,7 +10,11 @@
     <% hosts.each do |host| %>
       <tr>
         <td class="ellipsis"><%= link_to host.name, host_path(host) %></td>
-        <td class="hidden-tablet hidden-xs ellipsis"><%= safe_join([icon(host.operatingsystem, :size => '16x16'), host.operatingsystem.to_label]) if host.operatingsystem.present? %></td>
+        <td class="hidden-tablet hidden-xs ellipsis">
+          <span id="osicon-<%= host.id %>" />
+          <%= mount_react_component 'OsIcon', "#osicon-#{host.id}", { :name => host.operatingsystem.try(:name), :family => host.operatingsystem.try(:family), :size => "16x16" }.to_json %>
+          <%= host.operatingsystem.to_label if host.operatingsystem.present? %>
+        </td>
         <td class="hidden-tablet hidden-xs ellipsis"><%= host.owner %></td>
         <td class="hidden-tablet hidden-xs ellipsis"><%= _('%s ago') % time_ago_in_words(host.created_at) %></td>
         <td class="hidden-tablet hidden-xs ellipsis"><%= host.installed_at.present? ? _('%s ago') % time_ago_in_words(host.installed_at) : '-' %></td>
