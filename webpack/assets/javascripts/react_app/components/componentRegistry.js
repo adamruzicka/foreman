@@ -69,7 +69,7 @@ const coreComponets = [
   { name: 'PasswordStrength', type: PasswordStrength },
   { name: 'BreadcrumbBar', type: BreadcrumbBar },
   { name: 'FactChart', type: FactChart },
-  { name: 'OsIcon', type: OsIcon },
+  { name: 'OsIcon', type: OsIcon, data: false, store: false },
 ];
 
 componentRegistry.registerMultiple(coreComponets);
