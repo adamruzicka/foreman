@@ -16,7 +16,7 @@ import NXOS from './icons/NXOS.png';
 import OracleLinux from './icons/OracleLinux.png';
 import Puppet from './icons/Puppet.png';
 import RancherOS from './icons/RancherOS.png';
-import Redhat from './icons/Redhat.png';
+import RedHat from './icons/Redhat.png';
 import Scientific from './icons/Scientific.png';
 import SLC from './icons/SLC.png';
 import Solaris from './icons/Solaris.png';
@@ -39,6 +39,7 @@ const mapping = {
   'NXOS': NXOS,
   'OracleLinux': OracleLinux,
   'RancherOS': RancherOS,
+  'RedHat': RedHat,
   'scientific': Scientific,
   'SLC': SLC,
   'solaris|sunos': Solaris,
@@ -46,10 +47,10 @@ const mapping = {
   'XenServer': XenServer,
 };
 
-const findOsIcon = (name, family, size) => {
+const findOsIcon = (name, family, attrs) => {
   for (var re in mapping) {
     if (name.match(new RegExp(re, 'i'))) {
-      return <img src={mapping[re]} alt={family} size={size} />
+      return <img src={mapping[re]} alt={family} {...attrs} />
     }
   }
   return emptyIcon(family);
@@ -59,18 +60,20 @@ const emptyIcon = (family) => {
   return family == null ? <div/> : <div>{ family }</div>;
 }
 
-const OsIcon = ({ name, family, size }) => {
+const OsIcon = ({ data: { name, family, attrs } }) => {
   if (name == null) {
     return emptyIcon(family);
   } else {
-    return findOsIcon(name, family, size);
+    return findOsIcon(name, family, attrs);
   }
 };
 
 OsIcon.propTypes = {
-  name: PropTypes.string,
-  family: PropTypes.string,
-  size: PropTypes.string,
+  data: PropTypes.shape({
+    name: PropTypes.string,
+    family: PropTypes.string,
+    attrs: PropTypes.object,
+  }).isRequired,
 }
 
 export default OsIcon;

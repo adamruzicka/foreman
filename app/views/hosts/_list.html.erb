@@ -33,7 +33,8 @@
         <td class="ellipsis"><%= name_column(host) %></td>
         <td class="hidden-xs ellipsis">
           <span id="osicon-<%= host.id %>" />
-          <%= mount_react_component('OsIcon', "#osicon-#{host.id}", { :name => host.operatingsystem.try(:name), :family => host.operatingsystem.try(:family), :size => "16x16" }.to_json) %>
+          <%= mount_react_component('OsIcon', "#osicon-#{host.id}", { :name => host.operatingsystem.try(:name), :family => host.operatingsystem.try(:family), :attrs => { :size => "16x16" } }.to_json) %>
+          <%= " #{host.operatingsystem.to_label}" if host.operatingsystem %>
         </td>
         <td class="hidden-xs ellipsis"><%= host.environment %></td>
         <td class="hidden-tablet hidden-xs ellipsis"><%= host.compute_resource_or_model %></td>

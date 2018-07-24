@@ -26,7 +26,7 @@
               </td>
               <td class="hidden-xs">
                 <span id="osicon-<%= host.id %>" />
-                <%= mount_react_component 'OsIcon', "#osicon-#{host.id}", { :name => host.operatingsystem.try(:name), :family => host.operatingsystem.try(:family), :size => "18x18" }.to_json %>
+                <%= mount_react_component 'OsIcon', "#osicon-#{host.id}", { :name => host.operatingsystem.try(:name), :family => host.operatingsystem.try(:family), :attrs => { :size => "18x18" } }.to_json %>
                 <%= (trunc_with_tooltip(" #{host.operatingsystem.to_label}",14)).html_safe if host.operatingsystem %>
               </td>
               <td class="hidden-xs"><%= trunc_with_tooltip(host.try(:environment), 14) %></td>
