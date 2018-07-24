@@ -30,9 +30,11 @@
             <%= mount_react_component('PowerStatus', '#' + selector, {:id => host.id, :url => power_host_path(host.id)}.to_json) %>
           </td>
         <% end %>
-        <td class="ellipsis"><%= name_column(host) %>
+        <td class="ellipsis"><%= name_column(host) %></td>
+        <td class="hidden-xs ellipsis">
+          <span id="osicon-<%= host.id %>" />
+          <%= mount_react_component('OsIcon', "#osicon-#{host.id}", { :name => host.operatingsystem.try(:name), :family => host.operatingsystem.try(:family), :size => "16x16" }.to_json) %>
         </td>
-        <td class="hidden-xs ellipsis"><%= (icon(host.operatingsystem, :size => "16x16") + " #{host.operatingsystem.to_label}").html_safe if host.operatingsystem %></td>
         <td class="hidden-xs ellipsis"><%= host.environment %></td>
         <td class="hidden-tablet hidden-xs ellipsis"><%= host.compute_resource_or_model %></td>
         <td class="hidden-tablet hidden-xs"><%= label_with_link host.hostgroup, 23, @hostgroup_authorizer %></td>
