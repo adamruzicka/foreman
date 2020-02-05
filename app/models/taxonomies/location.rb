@@ -1,9 +1,11 @@
 class Location < Taxonomy
   extend ApipieDSL::Class
 
-  apipie :class, desc: 'TODO A class representing a location object' do
+  apipie :class, desc: 'A class representing a location object' do
     sections only: %w[all additional]
     property :name, String, desc: 'Name of the Location'
+    property :title, String, desc: 'Title of the Location'
+    property :description, String, desc: 'Description of the Location'
   end
   extend FriendlyId
   friendly_id :title
