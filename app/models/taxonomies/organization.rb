@@ -1,4 +1,12 @@
 class Organization < Taxonomy
+  extend ApipieDSL::Class
+
+  apipie :class, desc: 'A class representing an organization object' do
+    sections only: %w[all additional]
+    property :name, String, desc: 'Name of the Organization'
+    property :title, String, desc: 'Title of the Organization'
+    property :description, String, desc: 'Description of the Organization'
+  end
   extend FriendlyId
   friendly_id :title
   include Foreman::ThreadSession::OrganizationModel
