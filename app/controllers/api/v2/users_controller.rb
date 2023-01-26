@@ -13,7 +13,7 @@ module Api
 
       before_action :find_optional_nested_object
       skip_before_action :authorize, :only => [:extlogin]
-      before_action :authenticate, :only => [:extlogin]
+      before_action :api_extlogin, :only => [:extlogin]
 
       api :GET, "/users/", N_("List all users")
       api :GET, "/auth_source_ldaps/:auth_source_ldap_id/users", N_("List all users for LDAP authentication source")
@@ -138,6 +138,11 @@ module Api
 
       def parameter_filter_context
         Foreman::Controller::Parameters::User::Context.new(:api, controller_name, params[:action], editing_self?)
+      end
+
+      def api_extlogin
+        return render(status: 403, json: { error: "Forbidden" }) unless Setting['authorize_login_delegation_api']
+        authenticate
       end
     end
   end
