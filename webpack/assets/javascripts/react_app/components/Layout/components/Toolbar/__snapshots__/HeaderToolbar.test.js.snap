@@ -12,11 +12,6 @@ exports[`HeaderToolbar rendering render HeaderToolbar 1`] = `
       locations={
         Array [
           Object {
-            "href": "/locations/1-yaml/select",
-            "id": 1,
-            "title": "yaml",
-          },
-          Object {
             "href": "/locations/2-london/select",
             "id": 2,
             "title": "london",
@@ -72,7 +67,6 @@ exports[`HeaderToolbar rendering render HeaderToolbar 1`] = `
       className="header-tool-item-hidden-lg user-nav-item"
     >
       <UserDropdowns
-        changeActiveMenu={[Function]}
         className=""
         instanceTitle=""
         notificationUrl="/notification_recipients"
@@ -90,11 +84,15 @@ exports[`HeaderToolbar rendering render HeaderToolbar 1`] = `
               Object {
                 "children": Array [
                   Object {
+                    "href": "/a",
+                    "id": "menu_item_aa",
                     "isDivider": false,
                     "onClick": [MockFunction],
                     "title": "Aa",
                   },
                   Object {
+                    "href": "/c",
+                    "id": "menu_item_cc",
                     "isDivider": false,
                     "onClick": [MockFunction],
                     "title": "Cc",

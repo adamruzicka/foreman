@@ -8,10 +8,10 @@
       <% end %>
     </div>
     <%= yield(:before_search_bar) %>
-    <div class="row">
-      <div class="title_filter <%= searchable? ? " col-md-6 " : "col-md-4 " %>">
+    <div class="pf-c-page__main-section pf-m-light">
+       <div class="title_filter <%= searchable? ? " col-md-6 " : "col-md-4 " %>">
         <%= mount_search_bar if searchable? %>
-          <%= yield(:search_bar) %>&nbsp;
+        <%= yield(:search_bar) %>&nbsp;
       </div>
       <div id="title_action" class= <%= searchable? ? "col-md-6" : "col-md-8" %>>
         <% if filter_columns? %>
@@ -25,6 +25,8 @@
         </div>
       </div>
     </div>
-    <%= yield %>
+    <div class="pf-c-page__main-section pf-m-light">
+      <%= yield %>
+    </div>
   </div>
 </div>

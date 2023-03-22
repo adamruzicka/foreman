@@ -1,8 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Spinner } from 'patternfly-react';
+import { Col, Spinner } from 'patternfly-react';
+import {
+  PageSection,
+  PageSectionVariants,
+  TextContent,
+  Text,
+} from '@patternfly/react-core';
 import { changeQuery } from '../../../common/urlHelpers';
-
 import BreadcrumbBar from '../../../components/BreadcrumbBar';
 import SearchBar from '../../../components/SearchBar';
 import Head from '../../../components/Head';
@@ -20,47 +25,52 @@ const PageLayout = ({
   isLoading,
   children,
 }) => (
-  <div id="main">
-    <div id="react-content">
-      <Head>
-        <title>{header}</title>
-      </Head>
-      <div id="breadcrumb">
-        {!breadcrumbOptions && (
-          <div className="row form-group">
-            <h1 className="col-md-8">{header}</h1>
-          </div>
-        )}
-        {customBreadcrumbs ||
-          (breadcrumbOptions && <BreadcrumbBar {...breadcrumbOptions} />)}
-      </div>
-      {beforeToolbarComponent}
-      <Row>
-        <Col className="title_filter" md={searchable ? 6 : 4}>
-          {searchable && (
-            <SearchBar
-              data={{
-                ...searchProps,
-                autocomplete: { ...searchProps.autocomplete, searchQuery },
-              }}
-              onSearch={onSearch}
-            />
-          )}
-          &nbsp;
-        </Col>
-        <Col id="title_action" md={searchable ? 6 : 8}>
-          <div className="btn-toolbar pull-right">
-            {isLoading && (
-              <div id="toolbar-spinner">
-                <Spinner loading size="sm" />
-              </div>
-            )}
-            {toolbarButtons}
-          </div>
-        </Col>
-      </Row>
-      {children}
+  <div id="react-content">
+    <Head>
+      <title>{header}</title>
+    </Head>
+    <div id="breadcrumb">
+      {!breadcrumbOptions && (
+        <PageSection variant={PageSectionVariants.light}>
+          <TextContent>
+            <Text component="h1">{header}</Text>
+          </TextContent>
+        </PageSection>
+      )}
+      {customBreadcrumbs ||
+        (breadcrumbOptions && <BreadcrumbBar {...breadcrumbOptions} />)}
     </div>
+
+    {(searchable || beforeToolbarComponent || isLoading || toolbarButtons) && (
+      <PageSection variant={PageSectionVariants.light}>
+        {beforeToolbarComponent}
+        <div>
+          <Col className="title_filter" md={searchable ? 6 : 4}>
+            {searchable && (
+              <SearchBar
+                data={{
+                  ...searchProps,
+                  autocomplete: { ...searchProps.autocomplete, searchQuery },
+                }}
+                onSearch={onSearch}
+              />
+            )}
+            &nbsp;
+          </Col>
+          <Col id="title_action" md={searchable ? 6 : 8}>
+            <div className="btn-toolbar pull-right">
+              {isLoading && (
+                <div id="toolbar-spinner">
+                  <Spinner loading size="sm" />
+                </div>
+              )}
+              {toolbarButtons}
+            </div>
+          </Col>
+        </div>
+      </PageSection>
+    )}
+    <PageSection variant={PageSectionVariants.light}>{children}</PageSection>
   </div>
 );
 
