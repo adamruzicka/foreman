@@ -6,12 +6,12 @@ html {
 
 #rails-app-content {
   position: absolute;
-  top: 60px;
+  top: 70px;
   left: 0;
   right: 0;
   bottom: 0;
   overflow: auto;
-  height: calc(100% - 60px);
+  height: calc(100% - 70px);
   margin-left: 250px;
   &.pf-c-page {
     display: block;

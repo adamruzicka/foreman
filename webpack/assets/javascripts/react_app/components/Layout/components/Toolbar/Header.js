@@ -1,6 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { PageHeader, Brand } from '@patternfly/react-core';
+import {
+  Brand,
+  Masthead,
+  MastheadToggle,
+  MastheadMain,
+  MastheadBrand,
+  MastheadContent,
+  Button,
+} from '@patternfly/react-core';
+import { BarsIcon } from '@patternfly/react-icons';
+
 import {
   layoutPropTypes,
   layoutDefaultProps,
@@ -13,20 +23,26 @@ const Header = ({
   onNavToggle,
   isLoading,
 }) => (
-  <PageHeader
-    logo={
-      <React.Fragment>
-        <Brand src={logo} alt={brand} href={root} />
-        <span className="navbar-brand-txt">
-          <span>{brand}</span>
-        </span>
-      </React.Fragment>
-    }
-    logoProps={{ href: root }}
-    showNavToggle
-    onNavToggle={onNavToggle}
-    headerTools={<HeaderToolbar {...props} isLoading={isLoading} />}
-  />
+  <Masthead>
+    <MastheadToggle>
+      <Button onClick={onNavToggle} variant="plain">
+        <BarsIcon />
+      </Button>
+    </MastheadToggle>
+    <MastheadMain>
+      <MastheadBrand href={root}>
+        <React.Fragment>
+          <Brand src={logo} alt={brand} href={root} />
+          <span className="navbar-brand-txt">
+            <span>{brand}</span>
+          </span>
+        </React.Fragment>
+      </MastheadBrand>
+    </MastheadMain>
+    <MastheadContent>
+      <HeaderToolbar {...props} isLoading={isLoading} />
+    </MastheadContent>
+  </Masthead>
 );
 
 Header.propTypes = {

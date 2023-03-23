@@ -25,7 +25,7 @@
   .pf-c-nav__item.hidden-nav-lg {
     display: none;
 
-    @media (max-width: $pf-global--breakpoint--lg) {
+    @media (max-width: $header-max-width) {
       display: block;
     }
   }
