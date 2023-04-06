@@ -1,6 +1,9 @@
 @import '../../common/colors.scss';
 @import '../../common/variables.scss';
 
+.react-page #foreman-main-container {
+  height: 100%; // looks better with the pf page, but blocks rails content 
+}
 #foreman-main-container {
   height: fit-content;
 }
@@ -16,11 +19,6 @@
   }
 }
 
-#vertical-spinner {
-  margin-top: 15px;
-  margin-left: 5px;
-}
-
 #page-sidebar {
   .pf-c-nav__item.hidden-nav-lg {
     display: none;
@@ -31,9 +29,6 @@
   }
 }
 
-.pf-m-flyout {
-  padding-bottom: 10px;
-}
 .pf-c-nav {
   .nav-title-icon {
     padding-right: 10px;
@@ -41,9 +36,4 @@
   .nav-title {
     pointer-events: none;
   }
-}
-
-.foreman-nav-menu{
-  height: unset;
-  max-height: unset;
 }

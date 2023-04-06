@@ -15,6 +15,7 @@ import {
   Text,
   TextVariants,
   PageSection,
+  PageSectionVariants,
   Split,
   SplitItem,
 } from '@patternfly/react-core';
@@ -92,7 +93,7 @@ const HostDetails = ({
         <title>{id}</title>
       </Head>
 
-      <div className="header-top">
+      <PageSection variant={PageSectionVariants.light} type="breadcrumb">
         <SkeletonLoader
           skeletonProps={{ width: 300 }}
           status={status || STATUS.PENDING}
@@ -117,11 +118,10 @@ const HostDetails = ({
             />
           )}
         </SkeletonLoader>
-      </div>
+      </PageSection>
       <PageSection
         className="host-details-header-section"
-        isFilled
-        variant="light"
+        variant={PageSectionVariants.light}
       >
         <Grid className="hostname-skeleton-rapper">
           <GridItem span={8}>

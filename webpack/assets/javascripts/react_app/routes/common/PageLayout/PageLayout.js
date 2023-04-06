@@ -23,23 +23,24 @@ const PageLayout = ({
   header,
   beforeToolbarComponent,
   isLoading,
+  pageSectionType,
   children,
 }) => (
-  <div id="react-content">
+  <>
     <Head>
       <title>{header}</title>
     </Head>
-    <div id="breadcrumb">
-      {!breadcrumbOptions && (
-        <PageSection variant={PageSectionVariants.light}>
+    <PageSection variant={PageSectionVariants.light} type="breadcrumb">
+      <div id="breadcrumb">
+        {!breadcrumbOptions && (
           <TextContent>
             <Text component="h1">{header}</Text>
           </TextContent>
-        </PageSection>
-      )}
-      {customBreadcrumbs ||
-        (breadcrumbOptions && <BreadcrumbBar {...breadcrumbOptions} />)}
-    </div>
+        )}
+        {customBreadcrumbs ||
+          (breadcrumbOptions && <BreadcrumbBar {...breadcrumbOptions} />)}
+      </div>
+    </PageSection>
 
     {(searchable || beforeToolbarComponent || isLoading || toolbarButtons) && (
       <PageSection variant={PageSectionVariants.light}>
@@ -70,8 +71,10 @@ const PageLayout = ({
         </div>
       </PageSection>
     )}
-    <PageSection variant={PageSectionVariants.light}>{children}</PageSection>
-  </div>
+    <PageSection variant={PageSectionVariants.light} type={pageSectionType}>
+      {children}
+    </PageSection>
+  </>
 );
 
 PageLayout.propTypes = {
@@ -121,6 +124,7 @@ PageLayout.propTypes = {
   searchQuery: PropTypes.string,
   beforeToolbarComponent: PropTypes.node,
   isLoading: PropTypes.bool,
+  pageSectionType: PropTypes.string,
 };
 
 PageLayout.defaultProps = {
@@ -133,6 +137,7 @@ PageLayout.defaultProps = {
   isLoading: false,
   onSearch: searchQuery => changeQuery({ search: searchQuery.trim(), page: 1 }),
   beforeToolbarComponent: null,
+  pageSectionType: 'default',
 };
 
 export default PageLayout;

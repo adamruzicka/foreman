@@ -97,8 +97,6 @@ const Navigation = ({ items, flyoutActiveItem, setFlyoutActiveItem }) => {
               className,
               flyoutActiveItem === index && 'open-flyout'
             )}
-            flyout={<div> </div>}
-            itemId={index}
             onMouseOver={() => onMouseOver(index)}
             onClick={() => onMouseOver(index)}
             onKeyDown={e => handleFlyout(e, index)}

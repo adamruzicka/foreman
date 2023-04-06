@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Page, PageSidebar } from '@patternfly/react-core';
 import { layoutPropTypes, layoutDefaultProps } from './LayoutHelper';
-import LayoutContainer from './components/LayoutContainer';
 import Header from './components/Toolbar/Header';
 import Navigation from './Navigation';
 import './layout.scss';
@@ -20,7 +19,13 @@ const Layout = ({
   setFlyoutActiveItem,
 }) => {
   const onNavToggle = () => {
-    isCollapsed ? expandLayoutMenus() : collapseLayoutMenus();
+    if (isCollapsed) {
+      expandLayoutMenus();
+      document.body.classList.remove('collapsed-nav');
+    } else {
+      collapseLayoutMenus();
+      document.body.classList.add('collapsed-nav');
+    }
   };
   return (
     <>
@@ -44,7 +49,7 @@ const Layout = ({
           />
         }
       >
-        <LayoutContainer isCollapsed={isCollapsed}>{children}</LayoutContainer>
+        {children}
       </Page>
     </>
   );

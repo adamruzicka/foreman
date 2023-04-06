@@ -12,7 +12,7 @@ const OverviewTab = ({ response, status, hostName }) => {
 
   return (
     <PageSection className="host-details-cards-section">
-      <div className="host-details-tab-item details-tab">
+      <div className="host-details-tab-item details-tab host-details-cards-section">
         <Grid hasGutter>
           <Slot
             hostDetails={response}
