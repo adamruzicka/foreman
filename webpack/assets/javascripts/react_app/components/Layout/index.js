@@ -54,7 +54,7 @@ const ConnectedLayout = ({ children, data }) => {
   const isLoading = useSelector(state => selectIsLoading(state));
   const isCollapsed = useSelector(state => selectIsCollapsed(state));
 
-  const [flyoutActiveItem, setFlyoutActiveItem] = useState(null);
+  const [navigationActiveItem, setNavigationActiveItem] = useState(null);
 
   return (
     <Layout
@@ -64,12 +64,12 @@ const ConnectedLayout = ({ children, data }) => {
       isLoading={isLoading}
       isCollapsed={isCollapsed}
       collapseLayoutMenus={() => {
-        setFlyoutActiveItem(null);
+        setNavigationActiveItem(null);
         dispatch(collapseLayoutMenus());
       }}
       expandLayoutMenus={() => dispatch(expandLayoutMenus())}
-      flyoutActiveItem={flyoutActiveItem}
-      setFlyoutActiveItem={setFlyoutActiveItem}
+      navigationActiveItem={navigationActiveItem}
+      setNavigationActiveItem={setNavigationActiveItem}
     >
       {children}
     </Layout>

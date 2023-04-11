@@ -15,8 +15,8 @@ const Layout = ({
   expandLayoutMenus,
   collapseLayoutMenus,
   children,
-  flyoutActiveItem,
-  setFlyoutActiveItem,
+  navigationActiveItem,
+  setNavigationActiveItem,
 }) => {
   const onNavToggle = () => {
     if (isCollapsed) {
@@ -42,8 +42,8 @@ const Layout = ({
               <Navigation
                 items={items}
                 navigate={navigate}
-                flyoutActiveItem={flyoutActiveItem}
-                setFlyoutActiveItem={setFlyoutActiveItem}
+                navigationActiveItem={navigationActiveItem}
+                setNavigationActiveItem={setNavigationActiveItem}
               />
             }
           />

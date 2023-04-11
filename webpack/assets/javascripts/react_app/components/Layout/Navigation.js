@@ -17,7 +17,7 @@ const titleWithIcon = (title, iconClass) => (
   </div>
 );
 
-const Navigation = ({ items, flyoutActiveItem, setFlyoutActiveItem }) => {
+const Navigation = ({ items, navigationActiveItem, setNavigationActiveItem }) => {
   const clearTimerRef = useRef();
   useEffect(
     () => () => {
@@ -28,8 +28,8 @@ const Navigation = ({ items, flyoutActiveItem, setFlyoutActiveItem }) => {
 
   const onMouseOver = index => {
     clearTimeout(clearTimerRef.current);
-    if (flyoutActiveItem !== index) {
-      setFlyoutActiveItem(index);
+    if (navigationActiveItem !== index) {
+      setNavigationActiveItem(index);
     }
   };
 
@@ -52,13 +52,13 @@ const Navigation = ({ items, flyoutActiveItem, setFlyoutActiveItem }) => {
     if (key === ' ' || key === 'ArrowRight') {
       stopPropagation();
       preventDefault();
-      if (flyoutActiveItem !== index) {
-        setFlyoutActiveItem(index);
+      if (navigationActiveItem !== index) {
+        setNavigationActiveItem(index);
       }
     }
 
     if (key === 'Escape' || key === 'ArrowLeft') {
-      setFlyoutActiveItem(null);
+      setNavigationActiveItem(null);
     }
   };
   const groupedItems = items.map(({ subItems, ...rest }) => {
@@ -95,7 +95,7 @@ const Navigation = ({ items, flyoutActiveItem, setFlyoutActiveItem }) => {
             key={index}
             className={classNames(
               className,
-              flyoutActiveItem === index && 'open-flyout'
+              navigationActiveItem === index && 'open-flyout'
             )}
             onMouseOver={() => onMouseOver(index)}
             onClick={() => onMouseOver(index)}
@@ -137,11 +137,11 @@ const Navigation = ({ items, flyoutActiveItem, setFlyoutActiveItem }) => {
 
 Navigation.propTypes = {
   items: PropTypes.array.isRequired,
-  flyoutActiveItem: PropTypes.number,
-  setFlyoutActiveItem: PropTypes.func.isRequired,
+  navigationActiveItem: PropTypes.number,
+  setNavigationActiveItem: PropTypes.func.isRequired,
 };
 Navigation.defaultProps = {
-  flyoutActiveItem: null,
+  navigationActiveItem: null,
 };
 
 export default Navigation;

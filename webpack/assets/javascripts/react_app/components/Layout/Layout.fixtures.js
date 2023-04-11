@@ -395,7 +395,7 @@ export const layoutData = {
 export const layoutMock = {
   items: PFitems,
   data: layoutData,
-  setFlyoutActiveItem: jest.fn(),
+  setNavigationActiveItem: jest.fn(),
 };
 
 export const noItemsMock = {

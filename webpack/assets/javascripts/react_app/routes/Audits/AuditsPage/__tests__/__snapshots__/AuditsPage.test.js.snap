@@ -8,6 +8,7 @@ exports[`AuditsPage rendering render audits page 1`] = `
   header="Audits"
   isLoading={false}
   onSearch={[Function]}
+  pageSectionType="default"
   searchProps={
     Object {
       "autocomplete": Object {
@@ -80,6 +81,7 @@ exports[`AuditsPage rendering render audits page w/empty audits 1`] = `
   header="Audits"
   isLoading={false}
   onSearch={[Function]}
+  pageSectionType="default"
   searchProps={
     Object {
       "autocomplete": Object {
@@ -154,6 +156,7 @@ exports[`AuditsPage rendering render audits page w/error 1`] = `
   header="Audits"
   isLoading={false}
   onSearch={[Function]}
+  pageSectionType="default"
   searchProps={
     Object {
       "autocomplete": Object {
@@ -228,6 +231,7 @@ exports[`AuditsPage rendering render loading audits page 1`] = `
   header="Audits"
   isLoading={false}
   onSearch={[Function]}
+  pageSectionType="default"
   searchProps={
     Object {
       "autocomplete": Object {
