@@ -9,6 +9,7 @@ import {
   Divider,
 } from '@patternfly/react-core';
 import { getCurrentPath } from './LayoutHelper';
+import { NavigationSearch } from './NavigationSearch';
 
 const titleWithIcon = (title, iconClass) => (
   <div>
@@ -17,7 +18,11 @@ const titleWithIcon = (title, iconClass) => (
   </div>
 );
 
-const Navigation = ({ items, navigationActiveItem, setNavigationActiveItem }) => {
+const Navigation = ({
+  items,
+  navigationActiveItem,
+  setNavigationActiveItem,
+}) => {
   const clearTimerRef = useRef();
   useEffect(
     () => () => {
@@ -25,6 +30,7 @@ const Navigation = ({ items, navigationActiveItem, setNavigationActiveItem }) =>
     },
     []
   );
+  if (!items.length) return null;
 
   const onMouseOver = index => {
     clearTimeout(clearTimerRef.current);
@@ -85,6 +91,7 @@ const Navigation = ({ items, navigationActiveItem, setNavigationActiveItem }) =>
   return (
     <Nav id="foreman-nav">
       <NavList>
+        <NavigationSearch items={items} />
         {groupedItems.map(({ title, iconClass, groups, className }, index) => (
           <NavExpandable
             title={titleWithIcon(title, iconClass)}
