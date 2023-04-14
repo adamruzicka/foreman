@@ -205,7 +205,7 @@ class Host::Managed < Host::Base
   }
 
   scope :with_status, lambda { |status_type|
-    eager_load(:host_statuses).where(host_status: {type: status_type})
+    eager_load(:host_statuses).where(host_status_view: {type: status_type})
   }
 
   scope :with_config_status, lambda {
@@ -216,12 +216,12 @@ class Host::Managed < Host::Base
   # Host::Managed.with("failed") --> all reports which have a failed counter > 0
   # Host::Managed.with("failed",20) --> all reports which have a failed counter > 20
   scope :with, lambda { |*arg|
-    cond = "(host_status.status >> #{HostStatus::ConfigurationStatus.bit_mask(arg[0].to_s)}) > #{arg[1] || 0}"
+    cond = "(host_status_view.status >> #{HostStatus::ConfigurationStatus.bit_mask(arg[0].to_s)}) > #{arg[1] || 0}"
     with_config_status.where(sanitize_sql(cond))
   }
 
   scope :with_error, lambda {
-    cond = "(host_status.status > 0) and (
+    cond = "(host_status_view.status > 0) and (
       #{HostStatus::ConfigurationStatus.is('failed')} or
       #{HostStatus::ConfigurationStatus.is('failed_restarts')}
       )"
@@ -237,7 +237,7 @@ class Host::Managed < Host::Base
   }
 
   scope :with_changes, lambda {
-    cond = "(host_status.status > 0) and (
+    cond = "(host_status_view.status > 0) and (
       #{HostStatus::ConfigurationStatus.is('applied')} or
       #{HostStatus::ConfigurationStatus.is('restarted')})"
     with_config_status.where(sanitize_sql(cond))
@@ -251,7 +251,7 @@ class Host::Managed < Host::Base
   }
 
   scope :with_pending_changes, lambda {
-    cond = "(host_status.status > 0) AND (#{HostStatus::ConfigurationStatus.is('pending')})"
+    cond = "(host_status_view.status > 0) AND (#{HostStatus::ConfigurationStatus.is('pending')})"
     with_config_status.where(sanitize_sql(cond))
   }
 

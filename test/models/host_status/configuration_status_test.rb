@@ -144,11 +144,11 @@ class ConfigurationStatusTest < ActiveSupport::TestCase
   end
 
   test '.is_not' do
-    assert_equal '((host_status.status >> 10 & 1023) = 0)', HostStatus::ConfigurationStatus.is_not('restarted')
+    assert_equal '((host_status_view.status >> 10 & 1023) = 0)', HostStatus::ConfigurationStatus.is_not('restarted')
   end
 
   test '.is' do
-    assert_equal '((host_status.status >> 10 & 1023) != 0)', HostStatus::ConfigurationStatus.is('restarted')
+    assert_equal '((host_status_view.status >> 10 & 1023) != 0)', HostStatus::ConfigurationStatus.is('restarted')
   end
 
   test '.bit_mask' do

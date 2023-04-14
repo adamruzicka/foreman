@@ -2,7 +2,8 @@ module HostStatus
   class Status < ApplicationRecord
     prepend Foreman::STI
 
-    self.table_name = 'host_status'
+    self.table_name = 'host_status_view'
+    self.primary_key = :id
 
     belongs_to_host :inverse_of => :host_statuses
 
@@ -73,6 +74,9 @@ module HostStatus
     def status_link
     end
 
+    def with_transition_from(status)
+    end
+
     private
 
     def update_timestamp
@@ -80,7 +84,16 @@ module HostStatus
     end
 
     def update_status
-      self.status = to_status
+      calculated_status  = to_status
+      if (timestamp, state = with_transition_from(calculated_status))
+        self.valid_until = timestamp
+        self.temporary_status = calculated_status
+        self.final_status = state
+      else
+        self.valid_until = nil
+        self.temporary_status = nil
+        self.final_status = calculated_status
+      end
     end
   end
 end

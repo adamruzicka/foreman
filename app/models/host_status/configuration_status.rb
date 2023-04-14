@@ -101,11 +101,11 @@ module HostStatus
     end
 
     def self.is(config_status)
-      "((host_status.status >> #{bit_mask(config_status)}) != 0)"
+      "((host_status_view.status >> #{bit_mask(config_status)}) != 0)"
     end
 
     def self.is_not(config_status)
-      "((host_status.status >> #{bit_mask(config_status)}) = 0)"
+      "((host_status_view.status >> #{bit_mask(config_status)}) = 0)"
     end
 
     def self.bit_mask(config_status)
