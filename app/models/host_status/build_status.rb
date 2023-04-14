@@ -56,6 +56,12 @@ module HostStatus
       end
     end
 
+    def with_transition_from(status)
+      if status == PENDING && Setting[:token_duration] != 0 && host.token
+        [host.token.expires, TOKEN_EXPIRED]
+      end
+    end
+
     def waiting_for_build?
       host&.build
     end
