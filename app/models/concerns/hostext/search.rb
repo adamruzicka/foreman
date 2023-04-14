@@ -31,6 +31,7 @@ module Hostext
       scoped_search_status "failed_restarts", :relation => :configuration_status_object, :on => :status, :rename => :'status.failed_restarts', :aliases => ['configuration_status.failed_restarts']
       scoped_search_status "skipped",         :relation => :configuration_status_object, :on => :status, :rename => :'status.skipped', :aliases => ['configuration_status.skipped']
       scoped_search_status "pending",         :relation => :configuration_status_object, :on => :status, :rename => :'status.pending', :aliases => ['configuration_status.pending']
+      scoped_search :relation => :configuration_status_object, :on => :status, :rename => :'status.out-of-sync', :aliases => ['configuration_status.out-of-sync'], :offset => 60, :word_size => 1, :only_explicit => true, :complete_value => {:true => true, :false => false}
 
       scoped_search :relation => :build_status_object, :on => :status, :rename => :build_status, :only_explicit => true, :operators => ['=', '!=', '<>'], :complete_value => {
         built: HostStatus::BuildStatus::BUILT,

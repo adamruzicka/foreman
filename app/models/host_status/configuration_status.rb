@@ -3,6 +3,8 @@ module HostStatus
     delegate :error?, :changes?, :pending?, :to => :calculator
     delegate(*ConfigReport::METRIC, :to => :calculator)
 
+    OUT_OF_SYNC_MASK = 1 << 60
+
     def last_report
       self.last_report = host.last_report_object unless @last_report_set
       @last_report
@@ -118,6 +120,12 @@ module HostStatus
       return @config_status_link = nil unless User.current.can?(:view_config_reports, last_report, false)
 
       @config_status_link = last_report && Rails.application.routes.url_helpers.config_report_path(last_report)
+    end
+
+    def with_transition_from(status)
+      return if out_of_sync_disabled?
+
+      [self.reported_at + expected_report_interval, status | OUT_OF_SYNC_MASK]
     end
 
     private
