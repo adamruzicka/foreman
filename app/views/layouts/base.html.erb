@@ -32,6 +32,9 @@
       <% end %>
     </script>
     <%= javascript_include_tag "locale/#{FastGettext.locale}/app" %>
+    <% for plugin in ::Foreman::Plugin.all do %>
+      <%= javascript_include_tag "locale/#{FastGettext.locale}/#{plugin.engine.class.to_s.underscore.split('/', 2).first}" %>
+    <% end %>
     <%= javascript_include_tag *webpack_asset_paths('foreman-vendor', :extension => 'js') %>
     <%= javascript_include_tag *webpack_asset_paths('vendor', :extension => 'js') %>
     <%= javascript_include_tag *webpack_asset_paths('bundle', :extension => 'js') %>
