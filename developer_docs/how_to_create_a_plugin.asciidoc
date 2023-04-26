@@ -2387,6 +2387,7 @@ folder):
 $ mkdir ../foreman_plugin/locale
 $ mkdir ../foreman_plugin/locale/en
 $ rake plugin:gettext[foreman_plugin]
+$ rake plugin:po_to_json[foreman_plugin]
 ----
 
 This should create locale/foreman_plugin.pot file. Edit the header
