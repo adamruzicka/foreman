@@ -44,6 +44,32 @@ begin
 
     Rake::Task['gettext:find'].invoke
   end
+
+  desc 'Convert plugin strings to json - called via rake plugin:gettext[plugin_name]'
+  task 'plugin:po_to_json', :engine do |t, args|
+
+    @domain = args[:engine]
+    @engine = "#{@domain.camelize}::Engine".constantize
+    ENGINE_ROOT = File.join(@engine.root, 'locale')
+
+    namespace :gettext do
+      def locale_path
+        ENGINE_ROOT
+      end
+    end
+
+    GettextI18nRailsJs.config do |config|
+      config.jed_options = {
+        pretty: false,
+        domain: @domain,
+        variable: "locales['#{@domain}']",
+        variable_locale_scope: false
+      }
+    end
+    GettextI18nRailsJs.config.domain = @domain
+    GettextI18nRailsJs.config.rails_engine = @engine
+    GettextI18nRailsJs::Task.po_to_json
+  end
 rescue LoadError
   # gettext unavailable
   # this can happen as gettext is a development-only dependency used in
