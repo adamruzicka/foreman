@@ -66,9 +66,8 @@ module ReactjsHelper
   end
 
   def locale_js_tags
-    domains = ::FastGettext.translation_repositories.keys
-    plugins = ::Foreman::Plugin.all.map { |p| p.engine.class.to_s.underscore.split('/', 2).first }
-    (domains & plugins).map do |domain|
+    domains = ::Foreman::Plugin.all.map(&:gettext_domain).compact
+    domains.map do |domain|
       javascript_include_tag("locale/#{FastGettext.locale}/#{domain}")
     end.join.html_safe
   end

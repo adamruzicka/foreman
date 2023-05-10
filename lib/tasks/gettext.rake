@@ -52,31 +52,24 @@ begin
     Rake::Task['gettext:find'].invoke
   end
 
-  desc 'Convert plugin strings to json - called via rake plugin:gettext[plugin_name]'
-  task 'plugin:po_to_json', :engine do |t, args|
-    DOMAIN = args[:engine]
-    ENGINE = "#{DOMAIN.camelize}::Engine".constantize
-    ENGINE_ROOT = File.join(ENGINE.root, 'locale')
+  desc 'Convert plugin strings to json - called via rake plugin:po_to_json[plugin_name]'
+  task 'plugin:po_to_json', [:engine] => [:environment] do |t, args|
+    unless args[:engine]
+      puts "You must specify the name of the plugin (e.g. rake plugin:po_to_json['my_plugin'])"
+      exit 1
+    end
+
+    @plugin = Foreman::Plugin.find(args[:engine]) or raise("Unable to find registered plugin #{args[:engine]}")
+    @engine = @plugin.engine
+    DOMAIN = @plugin.gettext_domain
+
+    raise "Plugin '#{@plugin.name}' does not have translations registered'" unless DOMAIN
+
+    ENGINE_ROOT = @engine.root
 
     module GettextI18nRailsJs::Task
       def locale_path
         ENGINE_ROOT
-      end
-
-      def destination(lang)
-        path = output_path.join(lang)
-        path.mkpath
-
-        path.join("#{DOMAIN}.js").open("w") do |f|
-          f.rewind
-          f.write yield
-        end
-
-        puts "Created #{DOMAIN}.js in #{path}"
-      end
-
-      def output_path
-        ENGINE.root.join(GettextI18nRailsJs.config.output_path)
       end
     end
 
@@ -85,9 +78,11 @@ begin
         pretty: false,
         domain: DOMAIN,
         variable: "locales['#{DOMAIN}']",
-        variable_locale_scope: false, # Only available in not-yet released webhippie/po_to_json
+        variable_locale_scope: false,
       }
     end
+    GettextI18nRailsJs.config.domain = DOMAIN
+    GettextI18nRailsJs.config.rails_engine = @engine
 
     GettextI18nRailsJs::Task.po_to_json
   end
