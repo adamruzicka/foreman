@@ -72,10 +72,10 @@ begin
     end
 
     GettextI18nRailsJs.config.jed_options = {
-        pretty: false,
-        domain: domain,
-        variable: "locales['#{domain}']",
-        variable_locale_scope: false,
+      pretty: false,
+      domain: domain,
+      variable: "locales['#{domain}']",
+      variable_locale_scope: false,
     }
     GettextI18nRailsJs.config.domain = domain
     GettextI18nRailsJs.config.rails_engine = engine
