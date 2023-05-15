@@ -59,31 +59,28 @@ begin
       exit 1
     end
 
-    @plugin = Foreman::Plugin.find(args[:engine]) or raise("Unable to find registered plugin #{args[:engine]}")
-    @engine = @plugin.engine
-    DOMAIN = @plugin.gettext_domain
+    plugin = Foreman::Plugin.find(args[:engine]) or raise("Unable to find registered plugin #{args[:engine]}")
+    engine = plugin.engine
+    domain = plugin.gettext_domain
 
-    raise "Plugin '#{@plugin.name}' does not have translations registered'" unless DOMAIN
-
-    ENGINE_ROOT = @engine.root
+    raise "Plugin '#{plugin.name}' does not have translations registered'" unless domain
 
     module GettextI18nRailsJs::Task
       def locale_path
-        ENGINE_ROOT
+        @locale_path
       end
     end
 
-    GettextI18nRailsJs.config do |config|
-      config.jed_options = {
+    GettextI18nRailsJs.config.jed_options = {
         pretty: false,
-        domain: DOMAIN,
-        variable: "locales['#{DOMAIN}']",
+        domain: domain,
+        variable: "locales['#{domain}']",
         variable_locale_scope: false,
-      }
-    end
-    GettextI18nRailsJs.config.domain = DOMAIN
-    GettextI18nRailsJs.config.rails_engine = @engine
+    }
+    GettextI18nRailsJs.config.domain = domain
+    GettextI18nRailsJs.config.rails_engine = engine
 
+    GettextI18nRailsJs::Task.instance_variable_set(:@locale_path, engine.root)
     GettextI18nRailsJs::Task.po_to_json
   end
 rescue LoadError
