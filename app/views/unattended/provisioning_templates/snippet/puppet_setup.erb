@@ -17,9 +17,19 @@ os_family = @host.operatingsystem.family
 os_major  = @host.operatingsystem.major.to_i
 os_name   = @host.operatingsystem.name
 
-aio_enabled = host_param_true?('enable-puppetlabs-repo') || host_param_true?('enable-official-puppet8-repo') || host_param_true?('enable-puppet8')
-aio_openvox_enabled = host_param_true?('enable-openvox7') || host_param_true?('enable-openvox8')
-
+aio_enabled = %w(enable-puppetlabs-repo enable-official-puppet8-repo enable-puppet8).any? { |param| host_param_true?(param) }
+aio_openvox_enabled = host_param_true?('enable-openvox8-repo')
+-%>
+<% if aio_enabled && aio_openvox_enabled -%>
+<% if os_family == 'Windows' -%>
+Write-Error "Cannot enable Puppet and OpenVox repositories at the same time"
+exit 1
+<% else -%>
+echo "ERROR: Cannot enable Puppet and OpenVox repositories at the same time" >&2
+exit 1
+<% end -%>
+<% end -%>
+<%
 if host_param('run-puppet-in-installer-tags')
   puppet_tags = host_param('run-puppet-in-installer-tags')
 else
@@ -27,7 +37,7 @@ else
 end
 
 if os_family == 'Freebsd'
-  freebsd_package = 'puppet8'
+  freebsd_package = host_param_true?('enable-puppet8') ? 'puppet8' : 'openvox-agent8'
   etc_path = '/usr/local/etc/puppet'
   bin_path = '/usr/local/bin'
 elsif os_family == 'Windows'
@@ -54,6 +64,11 @@ apt-get install -y <%= linux_package %>
 <% elsif os_family == 'Freebsd' -%>
 pkg install -y <%= freebsd_package %>
 <% elsif os_family == 'Redhat' -%>
+<% if aio_enabled -%>
+rpmkeys --import https://yum.puppet.com/RPM-GPG-KEY-puppet
+<% elsif aio_openvox_enabled -%>
+rpmkeys --import https://yum.voxpupuli.org/GPG-KEY-openvox.pub
+<% end -%>
 if [ -f /usr/bin/dnf ]; then
   dnf -y install <%= linux_package %>
 else

@@ -33,8 +33,8 @@ echo 'root:<%= root_pass -%>' | /usr/sbin/chpasswd -e
 <%= snippet "blacklist_kernel_modules" -%>
 
 <% if puppet_enabled -%>
-<% if host_param_true?('enable-official-openvox8-repo') -%>
-<%= snippet 'puppetlabs_repo' -%>
+<% if host_param_true?('enable-openvox8-repo') -%>
+<%= snippet 'openvox_repo' -%>
 <% end -%>
 <%= snippet 'puppet_setup' -%>
 <% end -%>

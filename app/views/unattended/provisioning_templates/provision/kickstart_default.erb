@@ -35,6 +35,7 @@ description: |
   - enable-epel: boolean (default=false)
   - enable-puppetlabs-repo: boolean (default=false)
   - enable-official-puppet8-repo: boolean (default=false)
+  - enable-openvox8-repo: boolean (default=false)
   - skip-puppet-setup: boolean (default=false)
   - salt_master: string (default=undef)
   - ntp-pools: array (default=undef)
@@ -304,6 +305,9 @@ chmod +x /root/remote_execution_pull_setup.sh
 <% if puppet_enabled %>
 <% if host_param_true?('enable-puppetlabs-repo') || host_param_true?('enable-official-puppet8-repo') -%>
 <%= snippet 'puppetlabs_repo' %>
+<% end -%>
+<% if host_param_true?('enable-openvox8-repo') -%>
+<%= snippet 'openvox_repo' %>
 <% end -%>
 <%= snippet 'puppet_setup' %>
 <% end -%>

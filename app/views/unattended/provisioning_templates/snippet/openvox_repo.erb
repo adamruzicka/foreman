@@ -1,12 +1,12 @@
 <%#
 kind: snippet
-name: puppetlabs_repo
+name: openvox_repo
 model: ProvisioningTemplate
 snippet: true
 description: |
-  Fetches the package that deploys the PuppetLabs repository that can be
-  used to install Puppet from. It only performs the installation in case
-  one of the enable-puppetlabs*repo parameter is set to true.
+  Fetches the package that deploys the OpenVox repository that can be
+  used to install OpenVox from. It only performs the installation in case
+  the enable-openvox8-repo parameter is set to true.
 -%>
 <%
   puppet_agent_repo_enabled = %w(enable-puppetlabs-repo enable-official-puppet8-repo enable-puppet8).any? { |param| host_param_true?(param) }
@@ -29,33 +29,34 @@ proxy_uri    = host_param('http-proxy') ? "http://#{host_param('http-proxy')}:#{
 proxy_string = proxy_uri ? " -e https_proxy=#{proxy_uri}/" : ''
 proxy_string_bits = proxy_uri ? " -ProxyUsage Override -ProxyList #{proxy_uri}" : ''
 os_major  = @host.operatingsystem.major.to_i
+os_minor  = @host.operatingsystem.minor
 os_name   = @host.operatingsystem.name
 
-if os_family == 'Redhat'
-  repo_host = 'yum.puppet.com'
-  if os_name == 'Fedora'
-    repo_os = 'fedora'
-  else
-    repo_os = 'el'
-  end
-elsif os_family == 'Suse'
-  repo_host = 'yum.puppet.com'
-  repo_os = 'sles' # PuppetLabs repos only exist for SLES, not OpenSUSE
-elsif os_family == 'Debian'
-  repo_host = 'apt.puppet.com'
-  repo_os = @host.operatingsystem.release_name
-elsif os_family == 'Windows'
-  repo_host = 'downloads.puppet.com'
-  repo_os = 'windows'
-end
+if host_param_true?('enable-openvox8-repo')
+  repo_name = 'openvox8-release'
 
-if host_param_true?('enable-puppetlabs-repo')
-  repo_name = 'puppet-release'
-elsif host_param_true?('enable-official-puppet8-repo')
-  repo_name = 'puppet8-release'
-end
+  if os_family == 'Redhat'
+    repo_host = 'yum.voxpupuli.org'
+    if os_name == 'Fedora'
+      repo_os = 'fedora'
+    else
+      repo_os = 'el'
+    end
+  elsif os_family == 'Suse'
+    repo_host = 'yum.voxpupuli.org'
+    repo_os = 'sles' # OpenVox repos only exist for SLES, not OpenSUSE
+  elsif os_family == 'Debian'
+    repo_host = 'apt.voxpupuli.org'
+    if os_name == 'Ubuntu'
+      repo_os = "ubuntu#{@host.operatingsystem.major}.#{os_minor}"
+    else
+      repo_os = "debian#{os_major}"
+    end
+  elsif os_family == 'Windows'
+    repo_host = 'downloads.voxpupuli.org'
+    repo_os = 'windows'
+  end
 -%>
-<% if repo_name -%>
 <% if os_family == 'Redhat' || os_name == 'SLES' -%>
 rpm -Uvh<%= http_proxy %><%= http_port %> https://<%= repo_host %>/<%= repo_name %>-<%= repo_os %>-<%= os_major %>.noarch.rpm
 <% elsif os_family == 'Debian' -%>
@@ -64,9 +65,9 @@ apt-get -y install ca-certificates
 wget -O /tmp/<%= repo_name %>-<%= repo_os %>.deb<%= proxy_string %> https://<%= repo_host %>/<%= repo_name %>-<%= repo_os %>.deb
 dpkg -i /tmp/<%= repo_name %>-<%= repo_os %>.deb
 <% elsif os_family == 'Windows' -%>
-$puppet_agent_source = 'https://<%= repo_host %>/<%= repo_os %>/puppet-agent-<%= @host.architecture %>-latest.msi'
-$puppet_agent_msi = "${env:TEMP}\puppet-agent-<%= @host.architecture %>.msi"
-Write-Host "Downloading puppet-agent from ${$puppet_agent_source} to ${puppet_agent_msi}"
-Start-BitsTransfer -Source "${puppet_agent_source}" -Destination "${puppet_agent_msi}"<%= proxy_string_bits %>
+$openvox_agent_source = 'https://<%= repo_host %>/<%= repo_os %>/openvox-agent-<%= @host.architecture %>-latest.msi'
+$openvox_agent_msi = "${env:TEMP}\openvox-agent-<%= @host.architecture %>.msi"
+Write-Host "Downloading openvox-agent from ${$openvox_agent_source} to ${openvox_agent_msi}"
+Start-BitsTransfer -Source "${openvox_agent_source}" -Destination "${openvox_agent_msi}"<%= proxy_string_bits %>
 <% end -%>
 <% end -%>

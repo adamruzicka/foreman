@@ -12,8 +12,11 @@ description: |
   os_minor = @host.operatingsystem.minor.to_i
   # safemode renderer does not support unary negation
   aio_enabled = host_param_true?('enable-official-puppet8-repo') || host_param_true?('enable-puppet8')
+  aio_openvox_enabled = host_param_true?('enable-openvox8-repo')
+  raise 'Cannot enable Puppet and OpenVox repositories at the same time' if aio_enabled && aio_openvox_enabled
   puppet_enabled = !host_param_true?('skip-puppet-setup') && (host_puppet_server.present? || host_param_true?('force-puppet'))
   salt_enabled = host_param('salt_master') ? true : false
+  puppet_agent_package = aio_enabled ? 'puppet-agent' : 'openvox-agent'
   sles_minor_string = (os_minor == 0) ? '' : "_SP#{os_minor}"
 
   primary_interface_identifier = @host.primary_interface.identifier.blank? ? 'eth0' : @host.primary_interface.identifier
@@ -182,8 +185,8 @@ description: |
     <packages config:type="list">
       <package>openssh</package>
 <% if puppet_enabled -%>
-<% if aio_enabled -%>
-      <package>puppet-agent</package>
+<% if aio_enabled || aio_openvox_enabled -%>
+      <package><%= puppet_agent_package %></package>
 <% else -%>
       <package>rubygem-puppet</package>
 <% end -%>
@@ -379,6 +382,31 @@ rm /etc/resolv.conf
       </listentry>
 <% end -%>
 <% end -%>
+<% end -%>
+<% if puppet_enabled && aio_openvox_enabled -%>
+<%
+  openvox_repo_url = "https://yum.voxpupuli.org/openvox8/sles/#{os_major}/#{@host.architecture}/"
+-%>
+    <listentry>
+        <media_url><![CDATA[<%= openvox_repo_url %>]]></media_url>
+        <name>openvox</name>
+        <product>openvox</product>
+        <product_dir>/</product_dir>
+        <signature-handling>
+          <accept_non_trusted_gpg_key>
+            <all config:type="boolean">false</all>
+            <keys config:type="list">
+              <keyid>5FB999C2D62FF3D9</keyid>
+            </keys>
+          </accept_non_trusted_gpg_key>
+          <import_gpg_key>
+            <all config:type="boolean">false</all>
+            <keys config:type="list">
+              <keyid>5FB999C2D62FF3D9</keyid>
+            </keys>
+          </import_gpg_key>
+        </signature-handling>
+      </listentry>
 <% end -%>
 <% if salt_enabled -%>
       <listentry>
