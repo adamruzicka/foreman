@@ -17,7 +17,11 @@ os_family = @host.operatingsystem.family
 os_major  = @host.operatingsystem.major.to_i
 os_name   = @host.operatingsystem.name
 
-aio_openvox_enabled = host_param_true?('enable-openvox7') || host_param_true?('enable-openvox8')
+openvox_enabled = host_param_true?('enable-openvox') || host_param_true?('enable-openvox7') || host_param_true?('enable-openvox8')
+
+if openvox_enabled && host_param_true?('enable-puppet')
+  raise("Both 'enable-puppet' and 'enable-openvox' are set. These are mutually exclusive — set only one.")
+end
 
 if host_param('run-puppet-in-installer-tags')
   puppet_tags = host_param('run-puppet-in-installer-tags')
@@ -26,14 +30,14 @@ else
 end
 
 if os_family == 'Freebsd'
-  freebsd_package = host_param_true?('enable-puppet6') ? 'puppet6' : 'puppet5'
+  freebsd_package = openvox_enabled ? 'openvox-agent' : 'puppet-agent'
   etc_path = '/usr/local/etc/puppet'
   bin_path = '/usr/local/bin'
 elsif os_family == 'Windows'
-  windows_package = "puppet-agent-#{@host.architecture}.msi"
+  windows_package = openvox_enabled ? "openvox-agent-#{@host.architecture}.msi" : "puppet-agent-#{@host.architecture}.msi"
   etc_path = 'C:\ProgramData\PuppetLabs\puppet\etc'
   bin_path = 'C:\Program Files\Puppet Labs\Puppet\bin'
-elsif aio_openvox_enabled
+elsif openvox_enabled
   linux_package = 'openvox-agent'
   etc_path = '/etc/puppetlabs/puppet'
   bin_path = '/opt/puppetlabs/bin'
@@ -55,7 +59,7 @@ else
   yum -t -y install <%= linux_package %>
 fi
 <% elsif os_family == 'Suse' -%>
-<% if aio_openvox_enabled -%>
+<% if openvox_enabled -%>
 rpmkeys --import https://yum.voxpupuli.org/GPG-KEY-openvox.pub
 <% else -%>
 rpmkeys --import https://yum.puppet.com/RPM-GPG-KEY-puppet

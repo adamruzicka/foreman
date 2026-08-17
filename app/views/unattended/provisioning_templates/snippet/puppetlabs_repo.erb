@@ -18,30 +18,32 @@ os_family = @host.operatingsystem.family
 os_major  = @host.operatingsystem.major.to_i
 os_name   = @host.operatingsystem.name
 
+openvox_enabled = host_param_true?('enable-openvox') || host_param_true?('enable-openvox7') || host_param_true?('enable-openvox8')
+
 if os_family == 'Redhat'
-  repo_host = 'yum.puppet.com'
+  repo_host = openvox_enabled ? 'yum.voxpupuli.org' : 'yum.puppet.com'
   if os_name == 'Fedora'
     repo_os = 'fedora'
   else
     repo_os = 'el'
   end
 elsif os_family == 'Suse'
-  repo_host = 'yum.puppet.com'
-  repo_os = 'sles' # PuppetLabs repos only exist for SLES, not OpenSUSE
+  repo_host = openvox_enabled ? 'yum.voxpupuli.org' : 'yum.puppet.com'
+  repo_os = 'sles'
 elsif os_family == 'Debian'
-  repo_host = 'apt.puppet.com'
+  repo_host = openvox_enabled ? 'apt.voxpupuli.org' : 'apt.puppet.com'
   repo_os = @host.operatingsystem.release_name
 elsif os_family == 'Windows'
-  repo_host = 'downloads.puppet.com'
+  repo_host = openvox_enabled ? 'downloads.voxpupuli.org' : 'downloads.puppet.com'
   repo_os = 'windows'
 end
 
 if host_param_true?('enable-puppetlabs-repo')
-  repo_name = 'puppet-release'
+  repo_name = openvox_enabled ? 'openvox-release' : 'puppet-release'
 elsif host_param_true?('enable-official-puppet8-repo')
-  repo_name = 'puppet8-release'
+  repo_name = openvox_enabled ? 'openvox8-release' : 'puppet8-release'
 elsif host_param_true?('enable-official-puppet7-repo')
-  repo_name = 'puppet7-release'
+  repo_name = openvox_enabled ? 'openvox7-release' : 'puppet7-release'
 elsif host_param_true?('enable-puppetlabs-puppet6-repo')
   repo_name = 'puppet6-release'
 elsif host_param_true?('enable-puppetlabs-puppet5-repo')
@@ -57,9 +59,10 @@ apt-get -y install ca-certificates
 wget -O /tmp/<%= repo_name %>-<%= repo_os %>.deb<%= proxy_string %> https://<%= repo_host %>/<%= repo_name %>-<%= repo_os %>.deb
 dpkg -i /tmp/<%= repo_name %>-<%= repo_os %>.deb
 <% elsif os_family == 'Windows' -%>
-$puppet_agent_source = 'https://<%= repo_host %>/<%= repo_os %>/puppet-agent-<%= @host.architecture %>-latest.msi'
-$puppet_agent_msi = "${env:TEMP}\puppet-agent-<%= @host.architecture %>.msi"
-Write-Host "Downloading puppet-agent from ${$puppet_agent_source} to ${puppet_agent_msi}"
+<% agent_name = openvox_enabled ? 'openvox-agent' : 'puppet-agent' -%>
+$puppet_agent_source = 'https://<%= repo_host %>/<%= repo_os %>/<%= agent_name %>-<%= @host.architecture %>-latest.msi'
+$puppet_agent_msi = "${env:TEMP}\<%= agent_name %>-<%= @host.architecture %>.msi"
+Write-Host "Downloading <%= agent_name %> from ${$puppet_agent_source} to ${puppet_agent_msi}"
 Start-BitsTransfer -Source "${puppet_agent_source}" -Destination "${puppet_agent_msi}"<%= proxy_string_bits %>
 <% end -%>
 <% end -%>

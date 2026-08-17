@@ -279,16 +279,17 @@ rm /etc/resolv.conf
     <add_on_others config:type="list">
 <% if puppet_enabled -%>
 <%
-  puppet_repo_url_base = 'https://yum.puppet.com'
+  openvox_enabled = host_param_true?('enable-openvox') || host_param_true?('enable-openvox7') || host_param_true?('enable-openvox8')
+  puppet_repo_url_base = openvox_enabled ? 'https://yum.voxpupuli.org' : 'https://yum.puppet.com'
   if host_param_true?('enable-official-puppet8-repo')
-    puppet_repo_url = "#{puppet_repo_url_base}/puppet8/sles/#{os_major}/#{@host.architecture}/"
-    puppet_repo_alias = 'puppet8-release'
+    puppet_repo_url = "#{puppet_repo_url_base}/#{openvox_enabled ? 'openvox8' : 'puppet8'}/sles/#{os_major}/#{@host.architecture}/"
+    puppet_repo_alias = openvox_enabled ? 'openvox8-release' : 'puppet8-release'
   elsif host_param_true?('enable-official-puppet7-repo')
-    puppet_repo_url = "#{puppet_repo_url_base}/puppet7/sles/#{os_major}/#{@host.architecture}/"
-    puppet_repo_alias = 'puppet7-release'
+    puppet_repo_url = "#{puppet_repo_url_base}/#{openvox_enabled ? 'openvox7' : 'puppet7'}/sles/#{os_major}/#{@host.architecture}/"
+    puppet_repo_alias = openvox_enabled ? 'openvox7-release' : 'puppet7-release'
   else
-    puppet_repo_url = "#{puppet_repo_url_base}/puppet/sles/#{os_major}/#{@host.architecture}/"
-    puppet_repo_alias = 'puppet-release'
+    puppet_repo_url = "#{puppet_repo_url_base}/#{openvox_enabled ? 'openvox' : 'puppet'}/sles/#{os_major}/#{@host.architecture}/"
+    puppet_repo_alias = openvox_enabled ? 'openvox-release' : 'puppet-release'
   end
 -%>
       <listentry>
