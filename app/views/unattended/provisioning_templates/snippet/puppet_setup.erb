@@ -52,10 +52,15 @@ elsif aio_openvox_enabled
   linux_package = 'openvox-agent'
   etc_path = '/etc/puppetlabs/puppet'
   bin_path = '/opt/puppetlabs/bin'
-else
-  linux_package = os_family == 'Suse' ? 'rubygem-puppet' : 'puppet'
+elsif os_family == 'Suse'
+  linux_package = 'rubygem-puppet'
   etc_path = '/etc/puppet'
   bin_path = '/usr/bin'
+else
+  # Default to OpenVox when no explicit repo flags are set
+  linux_package = 'openvox-agent'
+  etc_path = '/etc/puppetlabs/puppet'
+  bin_path = '/opt/puppetlabs/bin'
 end
 -%>
 <% if os_family == 'Debian' -%>
