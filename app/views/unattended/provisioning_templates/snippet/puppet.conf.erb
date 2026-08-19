@@ -6,7 +6,7 @@ snippet: true
 description: |
   Generates a puppet.conf file which is required for the puppet agent bootstraping.
   The puppet server and CA is configured based on the host configuration. It supports
-  Puppet 8 and newer. Supports hostcert_renewal_interval for Puppet 8+.
+  Puppet 8 and newer.
 -%>
 <%
   os_family = @host.operatingsystem.family
