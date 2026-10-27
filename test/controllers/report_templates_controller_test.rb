@@ -35,6 +35,73 @@ class ReportTemplatesControllerTest < ActionController::TestCase
     assert_template 'edit'
   end
 
+  test 'revision returns the historical report template' do
+    ReportTemplate.auditing_enabled = true
+    @report_template.update!(template: 'historical report template')
+    audit = @report_template.audits.last
+
+    get :revision, params: { :version => audit.id }, session: set_session_user
+
+    assert_response :success
+    assert_equal 'historical report template', response.body
+  end
+
+  test 'revision requires audit log permission' do
+    organization = taxonomies(:organization1)
+    location = taxonomies(:location1)
+    user = setup_user('view', 'report_templates')
+    setup_user('view', 'organizations')
+    setup_user('view', 'locations')
+    setup_user('assign', 'organizations')
+    setup_user('assign', 'locations')
+    user.organizations = [organization]
+    user.locations = [location]
+    user.default_organization = organization
+    user.default_location = location
+    user.save!
+    ReportTemplate.auditing_enabled = true
+    template = as_admin do
+      template = FactoryBot.create(:report_template, :organizations => [organization], :locations => [location])
+      template.update!(template: 'historical report template')
+      template
+    end
+    audit = template.audits.last
+
+    session = set_session_user(user).merge(:organization_id => organization.id, :location_id => location.id)
+    get :revision, params: { :version => audit.id }, session: session
+
+    assert_response :not_found
+  end
+
+  test 'revision rejects an audit from another organization and location' do
+    ReportTemplate.auditing_enabled = true
+    tenant_a_organization = taxonomies(:organization1)
+    tenant_a_location = taxonomies(:location1)
+    tenant_b_organization = taxonomies(:organization2)
+    tenant_b_location = taxonomies(:location2)
+    inaccessible_template = FactoryBot.create(:report_template,
+      :template => 'initial secret',
+      :organizations => [tenant_b_organization],
+      :locations => [tenant_b_location])
+    inaccessible_template.update!(:template => 'historical secret')
+    audit = inaccessible_template.audits.last
+    user = users(:one)
+    user.roles = []
+    user.organizations = [tenant_a_organization]
+    user.locations = [tenant_a_location]
+    user.default_organization = tenant_a_organization
+    user.default_location = tenant_a_location
+    user.save!
+    user = setup_user('view', 'report_templates')
+    session = set_session_user(user).merge(
+      :organization_id => tenant_a_organization.id,
+      :location_id => tenant_a_location.id)
+
+    get :revision, params: { :version => audit.id }, session: session
+
+    assert_response :not_found
+  end
+
   test 'update_invalid' do
     ReportTemplate.any_instance.stubs(:valid?).returns(false)
     put :update, params: { :id => ReportTemplate.first.id, :report_template => {:name => nil} }, session: set_session_user

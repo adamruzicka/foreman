@@ -35,6 +35,58 @@ class PtablesControllerTest < ActionController::TestCase
     assert_template 'edit'
   end
 
+  test 'revision returns the historical layout' do
+    Ptable.auditing_enabled = true
+    @ptable.update!(layout: 'historical partition table')
+    audit = @ptable.audits.last
+
+    get :revision, params: { :version => audit.id }, session: set_session_user
+
+    assert_response :success
+    assert_equal 'historical partition table', response.body
+  end
+
+  test 'revision requires audit log permission' do
+    users(:one).roles = []
+    setup_user('view', 'ptables')
+    Ptable.auditing_enabled = true
+    @ptable.update!(layout: 'historical partition table')
+    audit = @ptable.audits.last
+
+    get :revision, params: { :version => audit.id }, session: set_session_user(:one)
+
+    assert_response :not_found
+  end
+
+  test 'revision rejects an audit from another organization and location' do
+    Ptable.auditing_enabled = true
+    tenant_a_organization = FactoryBot.create(:organization)
+    tenant_a_location = FactoryBot.create(:location)
+    tenant_b_organization = FactoryBot.create(:organization)
+    tenant_b_location = FactoryBot.create(:location)
+    inaccessible_ptable = FactoryBot.create(:ptable,
+      :layout => 'initial secret',
+      :organizations => [tenant_b_organization],
+      :locations => [tenant_b_location])
+    inaccessible_ptable.update!(:layout => 'historical secret')
+    audit = inaccessible_ptable.audits.last
+    user = users(:one)
+    user.roles = []
+    user.organizations = [tenant_a_organization]
+    user.locations = [tenant_a_location]
+    user.default_organization = tenant_a_organization
+    user.default_location = tenant_a_location
+    user.save!
+    user = setup_user('view', 'ptables')
+    session = set_session_user(user).merge(
+      :organization_id => tenant_a_organization.id,
+      :location_id => tenant_a_location.id)
+
+    get :revision, params: { :version => audit.id }, session: session
+
+    assert_response :not_found
+  end
+
   test 'update_invalid' do
     Ptable.any_instance.stubs(:valid?).returns(false)
     put :update, params: { :id => Ptable.first.id, :ptable => {:name => nil} }, session: set_session_user

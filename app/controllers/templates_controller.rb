@@ -71,7 +71,7 @@ class TemplatesController < ApplicationController
   end
 
   def revision
-    audit = Audit.find(params[:version])
+    audit = Audit.authorized(:view_audit_logs).find(params[:version])
     render :json => audit.revision.template
   end
 
